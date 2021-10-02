@@ -39,7 +39,9 @@ public class FogListener implements IMqttMessageListener {
         this.clientMQTT = clientMQTT;
         this.clientTopic = clientTopic;
 
-        /* Se inscreve no tópico */
+        /**
+         * Se inscreve no tópico.
+         */
         this.clientMQTT.subscribe(qos, this, topic);
     }
 
@@ -54,7 +56,9 @@ public class FogListener implements IMqttMessageListener {
         this.clientMQTT = clientMQTT;
         this.sensorsTopic = topic;
 
-        /* Se inscreve no tópico */
+        /**
+         * Se inscreve no tópico.
+         */
         this.clientMQTT.subscribe(qos, this, topic);
     }
 
