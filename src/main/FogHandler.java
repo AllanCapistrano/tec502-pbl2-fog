@@ -11,7 +11,7 @@ import mqtt.MQTTClient;
 public class FogHandler implements Runnable {
     
     private static final String MQTT_ADDRESS = "tcp://broker.mqttdashboard.com:1883";
-    private static final String DEFAULT_TOPIC = "tec502/pbl2/fog";
+    private static final String DEFAULT_SUBSCRIBE_TOPIC = "tec502/pbl2/fog";
     private static final int QOS = 0;
     
     private final String clientTopic;
@@ -20,9 +20,9 @@ public class FogHandler implements Runnable {
         MQTTClient clienteMQTT = new MQTTClient(MQTT_ADDRESS, null, null);
         clienteMQTT.connect();
         
-        this.clientTopic = DEFAULT_TOPIC + "/" + fogId;
+        this.clientTopic = DEFAULT_SUBSCRIBE_TOPIC + "/" + fogId;
         
-        new FogListener(clienteMQTT, DEFAULT_TOPIC, QOS, clientTopic);
+        new FogListener(clienteMQTT, DEFAULT_SUBSCRIBE_TOPIC, QOS, clientTopic);
     }
 
     @Override
