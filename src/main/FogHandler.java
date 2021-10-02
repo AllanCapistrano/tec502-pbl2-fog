@@ -22,7 +22,8 @@ public class FogHandler implements Runnable {
         
         this.clientTopic = DEFAULT_SUBSCRIBE_TOPIC + "/" + fogId;
         
-        new FogListener(clienteMQTT, DEFAULT_SUBSCRIBE_TOPIC, QOS, clientTopic);
+        new FogListener(clienteMQTT, DEFAULT_SUBSCRIBE_TOPIC, QOS, this.clientTopic);
+        new FogListener(clienteMQTT, this.clientTopic, QOS);
     }
 
     @Override

@@ -6,29 +6,61 @@ import org.json.JSONObject;
 
 /**
  * Lida com a mensagem recebida pelo Broker MQTT.
- * 
+ *
  * @author Allan Capistrano
  */
 public class FogListener implements IMqttMessageListener {
-    
+
+    /*-------------------------- Constantes ----------------------------------*/
     private static final String MQTT_ADDRESS = "tcp://broker.mqttdashboard.com:1883";
     private static final String RESPONSE_TOPIC = "tec502/pbl2/patientDevice";
     private static final int QOS = 0;
-    
-    private final MQTTClient clientMQTT;
-    private final String clientTopic;
+    /*------------------------------------------------------------------------*/
 
-    public FogListener(MQTTClient clientMQTT, String topic, int qos, String clientTopic) {
+    private final MQTTClient clientMQTT;
+    private String clientTopic;
+    private String sensorsTopic;
+
+    /**
+     * Método construtor.
+     *
+     * @param clientMQTT MQTTClient Cliente MQTT conectado com o Broker.
+     * @param topic String - Tópico para realizar a inscrição.
+     * @param qos int - Qualidade do serviço.
+     * @param clientTopic String - Tópico para o qual o dispositivo de sensores
+     * irá publicar.
+     */
+    public FogListener(
+            MQTTClient clientMQTT,
+            String topic,
+            int qos,
+            String clientTopic
+    ) {
         this.clientMQTT = clientMQTT;
         this.clientTopic = clientTopic;
-        
+
         /* Se inscreve no tópico */
         this.clientMQTT.subscribe(qos, this, topic);
     }
-    
+
+    /**
+     * Método construtor.
+     *
+     * @param clientMQTT MQTTClient Cliente MQTT conectado com o Broker.
+     * @param topic String - Tópico para realizar a inscrição.
+     * @param qos int - Qualidade do serviço.
+     */
+    public FogListener(MQTTClient clientMQTT, String topic, int qos) {
+        this.clientMQTT = clientMQTT;
+        this.sensorsTopic = topic;
+
+        /* Se inscreve no tópico */
+        this.clientMQTT.subscribe(qos, this, topic);
+    }
+
     /**
      * Este método é chamado quando chega uma mensagem do servidor.
-     * 
+     *
      * @param topic String - Tópico em que a mensagem foi publicada.
      * @param msg MqttMessage - Mensagem.
      * @throws Exception - Em caso de erro, o cliente será encerrado.
@@ -36,27 +68,29 @@ public class FogListener implements IMqttMessageListener {
     @Override
     public void messageArrived(String topic, MqttMessage msg) throws Exception {
         /**
-         * Caso tenha recebido a mensagem certa, responde com o tópico que o 
+         * Caso tenha recebido a mensagem certa, responde com o tópico que o
          * dispositivo deverá publicar.
          */
         if (topic.equals("tec502/pbl2/fog")) {
             this.response();
-        } else {
-            // TODO
+        } else if (topic.equals(this.sensorsTopic) && !this.sensorsTopic.equals("")) {
+            JSONObject json = new JSONObject(new String(msg.getPayload()));
+
+            System.out.println(json);
         }
     }
-    
+
     /**
      * Responde para o dispositivo qual o tópico que ele deve publicar.
      */
     private void response() {
         MQTTClient response = new MQTTClient(MQTT_ADDRESS, null, null);
         response.connect();
-        
+
         JSONObject json = new JSONObject();
-        
+
         json.put("topic", this.clientTopic);
-        
+
         response.publish(RESPONSE_TOPIC, json.toString().getBytes(), QOS);
     }
 }
