@@ -10,9 +10,11 @@ import mqtt.MQTTClient;
  */
 public class FogHandler implements Runnable {
 
+    /*-------------------------- Constantes ----------------------------------*/
     private static final String MQTT_ADDRESS = "tcp://broker.mqttdashboard.com:1883";
     private static final String DEFAULT_SUBSCRIBE_TOPIC = "tec502/pbl2/fog";
     private static final int QOS = 0;
+    /*------------------------------------------------------------------------*/
 
     private final String clientTopic;
 
@@ -34,5 +36,5 @@ public class FogHandler implements Runnable {
     @Override
     public void run() {
     }
-
+    
 }
