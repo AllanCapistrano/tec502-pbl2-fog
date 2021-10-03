@@ -38,7 +38,7 @@ public class Fog {
                  */
                 FogHandler fogThread = new FogHandler(patientDevices.size()); // Trocar tópico.
                 fogHandler.add(fogThread);
-
+                
                 /**
                  * Executando as threads.
                  */
@@ -47,5 +47,34 @@ public class Fog {
                 threadCreationControl = patientDevices.size();
             }
         }
+    }
+
+    /**
+     * Adiciona um dispositivo na lista de dispositivos dos pacientes.
+     *
+     * @param patientDevice PatientDevice - Dispositivo a ser adicionado.
+     */
+    public static void addPatientDevice(PatientDevice patientDevice) {
+        patientDevices.add(patientDevice);
+    }
+
+    /**
+     * Retorna o tamanho atual da lista de dispositivos de pacientes.
+     *
+     * @return int
+     */
+    public static int patientDeviceListSize() {
+        return patientDevices.size();
+    }
+
+    /**
+     * Retorna um dispositivo específico da lista de dispositivos de pacientes,
+     * com base na sua posição na mesma.
+     *
+     * @param index int - Posição do dispositivo na lista
+     * @return PatientDevice
+     */
+    public static PatientDevice getPatientDevice(int index) {
+        return patientDevices.get(index);
     }
 }
