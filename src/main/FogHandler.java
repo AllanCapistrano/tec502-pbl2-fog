@@ -12,29 +12,32 @@ public class FogHandler implements Runnable {
 
     /*-------------------------- Constantes ----------------------------------*/
     private static final String MQTT_ADDRESS = "tcp://broker.mqttdashboard.com:1883";
-    private static final String DEFAULT_SUBSCRIBE_TOPIC = "tec502/pbl2/fog";
     private static final int QOS = 0;
     /*------------------------------------------------------------------------*/
-
-    private final String clientTopic;
-
+    
+    private String clientTopic;
+    private MQTTClient clienteMQTT;
+    
     /**
      * Método construtor.
      *
-     * @param fogId int - Identificador da fog.
+     * @param clientTopic String - Tópico no qual o dispositivo irá publicar os
+     * valores medidos pelos sensores.
      */
-    public FogHandler(int fogId) {
-        MQTTClient clienteMQTT = new MQTTClient(MQTT_ADDRESS, null, null);
-        clienteMQTT.connect();
-
-        this.clientTopic = DEFAULT_SUBSCRIBE_TOPIC + "/" + System.currentTimeMillis() + "/" + fogId;
-
-        new FogListener(clienteMQTT, DEFAULT_SUBSCRIBE_TOPIC, QOS, this.clientTopic);
-        new FogListener(clienteMQTT, this.clientTopic, QOS);
+    public FogHandler(String clientTopic) {
+        this.clienteMQTT = new MQTTClient(MQTT_ADDRESS, null, null);
+        this.clienteMQTT.connect();
+        
+        this.clientTopic = clientTopic;
     }
 
     @Override
     public void run() {
+        /**
+         * Iniciando um novo ouvinte, que realizará a assinatura no tópico 
+         * em que o dispositivo irá publicar os valores dos sensores.
+         */
+        new FogListener(this.clienteMQTT, this.clientTopic, QOS);
     }
-    
+
 }
