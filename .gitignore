@@ -83,3 +83,4 @@ nb-configuration.xml
 ##############################
 .DS_Store
 
+!org.eclipse.paho.client.mqttv3-1.2.5.jar
