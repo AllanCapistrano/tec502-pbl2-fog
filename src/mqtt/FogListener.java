@@ -50,8 +50,6 @@ public class FogListener implements IMqttMessageListener {
      */
     @Override
     public void messageArrived(String topic, MqttMessage msg) throws Exception {
-        System.out.println("LISTA: " + Fog.patientDeviceListSize());
-
         /**
          * Caso tenha recebido a mensagem certa, responde com o tópico que o
          * dispositivo deverá publicar.
