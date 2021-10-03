@@ -19,33 +19,10 @@ public class FogListener implements IMqttMessageListener {
     private static final int QOS = 0;
     /*------------------------------------------------------------------------*/
 
+    public static String clientTopic;
+    
     private final MQTTClient clientMQTT;
-    private String clientTopic;
-    private String sensorsTopic;
-
-    /**
-     * Método construtor.
-     *
-     * @param clientMQTT MQTTClient Cliente MQTT conectado com o Broker.
-     * @param topic String - Tópico para realizar a inscrição.
-     * @param qos int - Qualidade do serviço.
-     * @param clientTopic String - Tópico para o qual o dispositivo de sensores
-     * irá publicar.
-     */
-    public FogListener(
-            MQTTClient clientMQTT,
-            String topic,
-            int qos,
-            String clientTopic
-    ) {
-        this.clientMQTT = clientMQTT;
-        this.clientTopic = clientTopic;
-
-        /**
-         * Se inscreve no tópico.
-         */
-        this.clientMQTT.subscribe(qos, this, topic);
-    }
+    private final String sensorsTopic;
 
     /**
      * Método construtor.
@@ -99,7 +76,7 @@ public class FogListener implements IMqttMessageListener {
 
         JSONObject json = new JSONObject();
 
-        json.put("topic", this.clientTopic);
+        json.put("topic", clientTopic);
 
         response.publish(RESPONSE_TOPIC, json.toString().getBytes(), QOS);
     }
