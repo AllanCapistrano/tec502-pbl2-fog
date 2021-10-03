@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import models.PatientDevice;
+import mqtt.FogListener;
+import mqtt.MQTTClient;
 
 /**
  * Fog responsável pela comunicação com os dispositivos.
@@ -24,27 +26,40 @@ public class Fog {
     private static final ArrayList<FogHandler> fogHandler = new ArrayList<>();
     private static final ExecutorService pool = Executors.newCachedThreadPool();
 
+    private static int listLength;
+    
     /**
      * Faz o controle da criação de novas threads.
      */
     private static int threadCreationControl = -1;
 
     public static void main(String[] args) {
+        listLength = patientDevices.size();
+
+        MQTTClient temp = new MQTTClient("tcp://broker.mqttdashboard.com:1883", null, null);
+        temp.connect();
+
+        new FogListener(temp, "tec502/pbl2/fog", 0);
+
         while (true) {
+            listLength = patientDevices.size();
+
             /* Por enquanto cada thread lida com 5 requisições. */
-            if (patientDevices.size() % REQUEST_COUNT == 0 && threadCreationControl != patientDevices.size()) {
+            if (listLength % REQUEST_COUNT == 0 && listLength != threadCreationControl) {
+                threadCreationControl = listLength;
+
+                FogListener.clientTopic = "tec502/pbl2/fog" + "/" + System.currentTimeMillis() + "/" + threadCreationControl;
+
                 /**
                  * Serviço que lida com as requisições utilizando threads.
                  */
-                FogHandler fogThread = new FogHandler(patientDevices.size()); // Trocar tópico.
+                FogHandler fogThread = new FogHandler(FogListener.clientTopic);
                 fogHandler.add(fogThread);
-                
+
                 /**
                  * Executando as threads.
                  */
                 pool.execute(fogThread);
-
-                threadCreationControl = patientDevices.size();
             }
         }
     }
