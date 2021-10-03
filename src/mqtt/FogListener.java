@@ -1,5 +1,7 @@
 package mqtt;
 
+import main.Fog;
+import models.PatientDevice;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONObject;
@@ -71,6 +73,8 @@ public class FogListener implements IMqttMessageListener {
      */
     @Override
     public void messageArrived(String topic, MqttMessage msg) throws Exception {
+        System.out.println("LISTA: " + Fog.patientDeviceListSize());
+
         /**
          * Caso tenha recebido a mensagem certa, responde com o tópico que o
          * dispositivo deverá publicar.
@@ -79,6 +83,8 @@ public class FogListener implements IMqttMessageListener {
             this.response();
         } else if (topic.equals(this.sensorsTopic) && !this.sensorsTopic.equals("")) {
             JSONObject json = new JSONObject(new String(msg.getPayload()));
+
+            this.jsonHandler(json);
 
             System.out.println(json);
         }
@@ -96,5 +102,65 @@ public class FogListener implements IMqttMessageListener {
         json.put("topic", this.clientTopic);
 
         response.publish(RESPONSE_TOPIC, json.toString().getBytes(), QOS);
+    }
+
+    /**
+     * Lida com o JSON enviado pelo dispositivo de sensores dos pacintes.
+     *
+     * @param json JSONObject - JSON recebido.
+     */
+    private void jsonHandler(JSONObject json) {
+        String name = json.getString("userName");
+        String deviceId = json.getString("id");
+        float bodyTemperature = json.getFloat("temperature");
+        int respiratoryFrequency = json.getInt("respiratoryFrequency");
+        float bloodOxygen = json.getFloat("bloodOxygen");
+        int bloodPressure = json.getInt("bloodPressure");
+        int heartRate = json.getInt("heartRate");
+
+        int listLength = Fog.patientDeviceListSize();
+
+        if (listLength == 0) {
+            Fog.addPatientDevice(
+                    new PatientDevice(
+                            name,
+                            bodyTemperature,
+                            respiratoryFrequency,
+                            bloodOxygen,
+                            bloodPressure,
+                            heartRate,
+                            deviceId
+                    )
+            );
+        } else {
+            int i;
+
+            for (i = 0; i < listLength; i++) {
+                if (Fog.getPatientDevice(i).getDeviceId().equals(deviceId)) {
+                    Fog.getPatientDevice(i).setBodyTemperature(bodyTemperature);
+                    Fog.getPatientDevice(i).setRespiratoryFrequency(respiratoryFrequency);
+                    Fog.getPatientDevice(i).setBloodOxygenation(bloodOxygen);
+                    Fog.getPatientDevice(i).setBloodPressure(bloodPressure);
+                    Fog.getPatientDevice(i).setHeartRate(heartRate);
+
+                    break;
+                }
+            }
+
+            if (i == listLength) {
+                Fog.addPatientDevice(
+                        new PatientDevice(
+                                name,
+                                bodyTemperature,
+                                respiratoryFrequency,
+                                bloodOxygen,
+                                bloodPressure,
+                                heartRate,
+                                deviceId
+                        )
+                );
+            }
+
+        }
     }
 }
