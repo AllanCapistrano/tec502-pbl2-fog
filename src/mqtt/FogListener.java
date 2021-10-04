@@ -20,7 +20,7 @@ public class FogListener implements IMqttMessageListener {
     /*------------------------------------------------------------------------*/
 
     public static String clientTopic;
-    
+
     private final MQTTClient clientMQTT;
     private final String sensorsTopic;
 
@@ -95,7 +95,7 @@ public class FogListener implements IMqttMessageListener {
 
         int listLength = Fog.patientDeviceListSize();
 
-        if (listLength == 0) {
+        if (listLength == 0 || !Fog.devicePatientExists(deviceId)) {
             Fog.addPatientDevice(
                     new PatientDevice(
                             name,
@@ -108,9 +108,7 @@ public class FogListener implements IMqttMessageListener {
                     )
             );
         } else {
-            int i;
-
-            for (i = 0; i < listLength; i++) {
+            for (int i = 0; i < listLength; i++) {
                 if (Fog.getPatientDevice(i).getDeviceId().equals(deviceId)) {
                     Fog.getPatientDevice(i).setBodyTemperature(bodyTemperature);
                     Fog.getPatientDevice(i).setRespiratoryFrequency(respiratoryFrequency);
@@ -121,21 +119,6 @@ public class FogListener implements IMqttMessageListener {
                     break;
                 }
             }
-
-            if (i == listLength) {
-                Fog.addPatientDevice(
-                        new PatientDevice(
-                                name,
-                                bodyTemperature,
-                                respiratoryFrequency,
-                                bloodOxygen,
-                                bloodPressure,
-                                heartRate,
-                                deviceId
-                        )
-                );
-            }
-
         }
     }
 }
