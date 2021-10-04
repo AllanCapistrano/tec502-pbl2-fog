@@ -15,7 +15,7 @@ import mqtt.MQTTClient;
 import org.json.JSONObject;
 
 /**
- * Fog responsável pela comunicação com os dispositivos.
+ * Fog responsável pela comunicação com os dispositivos e com o servidor.
  *
  * @author Allan Capistrano e João Erick Barbosa
  */
@@ -26,6 +26,7 @@ public class Fog {
     private static final String SOCKET_ADDRESS = "localhost";
     private static final int SOCKET_PORT = 12244;
     private static final int SLEEP = 5000;
+    private static final String DEFAULT_TOPIC = "tec502/pbl2/fog";
     /*------------------------------------------------------------------------*/
 
     private static final List<PatientDevice> patientDevices
@@ -44,10 +45,10 @@ public class Fog {
     public static void main(String[] args) {
         listLength = patientDevices.size();
 
-        MQTTClient temp = new MQTTClient("tcp://broker.mqttdashboard.com:1883", null, null);
-        temp.connect();
+        MQTTClient mqttClient = new MQTTClient("tcp://broker.mqttdashboard.com:1883", null, null);
+        mqttClient.connect();
 
-        new FogListener(temp, "tec502/pbl2/fog", 0);
+        new FogListener(mqttClient, "tec502/pbl2/fog", 0);
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -94,7 +95,7 @@ public class Fog {
             if (listLength % REQUEST_COUNT == 0 && listLength != threadCreationControl) {
                 threadCreationControl = listLength;
 
-                FogListener.clientTopic = "tec502/pbl2/fog" + "/" + System.currentTimeMillis() + "/" + threadCreationControl;
+                FogListener.clientTopic = DEFAULT_TOPIC + "/" + System.currentTimeMillis() + "/" + threadCreationControl;
 
                 /**
                  * Serviço que lida com as requisições utilizando threads.
@@ -157,8 +158,6 @@ public class Fog {
         json.put("method", httpMethod); // Método HTTP
         json.put("route", route); // Rota
 
-        System.out.println(patientDevices.get(0).isIsSeriousCondition());
-
         json.put("body", patientDevices); // Adicionando o Array no JSON que será enviado
 
         try {
@@ -174,5 +173,22 @@ public class Fog {
                     + "para o servidor.");
             System.out.println(ioe);
         }
+    }
+    
+    /**
+     * Verifica se o dispositivo do paciente está presente na lista.
+     *
+     * @param deviceId String - Id do dispositivo;
+     * @return PatientDevice | null;
+     */
+    public static boolean devicePatientExists(String deviceId) {
+        return (patientDevices.stream()
+                .filter(
+                        patientDevice -> deviceId.equals(
+                                patientDevice.getDeviceId()
+                        )
+                )
+                .findFirst()
+                .orElse(null) != null);
     }
 }
