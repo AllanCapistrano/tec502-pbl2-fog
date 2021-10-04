@@ -1,5 +1,9 @@
 package main;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +12,7 @@ import java.util.concurrent.Executors;
 import models.PatientDevice;
 import mqtt.FogListener;
 import mqtt.MQTTClient;
+import org.json.JSONObject;
 
 /**
  * Fog responsável pela comunicação com os dispositivos.
@@ -18,6 +23,9 @@ public class Fog {
 
     /*-------------------------- Constantes ----------------------------------*/
     private static final int REQUEST_COUNT = 5;
+    private static final String SOCKET_ADDRESS = "localhost";
+    private static final int SOCKET_PORT = 12244;
+    private static final int SLEEP = 5000;
     /*------------------------------------------------------------------------*/
 
     private static final List<PatientDevice> patientDevices
@@ -27,7 +35,7 @@ public class Fog {
     private static final ExecutorService pool = Executors.newCachedThreadPool();
 
     private static int listLength;
-    
+
     /**
      * Faz o controle da criação de novas threads.
      */
@@ -40,6 +48,44 @@ public class Fog {
         temp.connect();
 
         new FogListener(temp, "tec502/pbl2/fog", 0);
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        if (patientDeviceListSize() != 0) {
+                            Socket conn = new Socket(SOCKET_ADDRESS, SOCKET_PORT);
+
+                            sendToServer("POST", "patients/create", conn);
+
+                            conn.close();
+                        }
+
+                    } catch (UnknownHostException uhe) {
+                        System.err.println("Servidor não encontrado ou "
+                                + "está fora do ar.");
+                        System.out.println(uhe);
+                    } catch (IOException ioe) {
+                        System.err.println("Erro ao tentar alterar os "
+                                + "valores dos sensores.");
+                        System.out.println(ioe);
+                    }
+
+                    try {
+                        Thread.sleep(SLEEP);
+                    } catch (InterruptedException ie) {
+                        System.err.println("Não foi possível parar a Thread");
+                        System.out.println(ie);
+                    }
+                }
+            }
+        });
+
+        /* Finalizar a thread de requisição quando fechar o programa. */
+        thread.setDaemon(true);
+        /* Iniciar a thread de requisições. */
+        thread.start();
 
         while (true) {
             listLength = patientDevices.size();
@@ -91,5 +137,42 @@ public class Fog {
      */
     public static PatientDevice getPatientDevice(int index) {
         return patientDevices.get(index);
+    }
+
+    /**
+     * Envia para o servidor uma requisição.
+     *
+     * @param httpMethod String - Método HTTP da requisição que será feita.
+     * @param route String - Rota para a qual a requisição será feita.
+     * @param conn Socket - Conexão que é realizada com o servidor.
+     */
+    public static void sendToServer(
+            String httpMethod,
+            String route,
+            Socket conn
+    ) {
+        JSONObject json = new JSONObject();
+
+        /* Definindo os dados que serão enviadas para o Server. */
+        json.put("method", httpMethod); // Método HTTP
+        json.put("route", route); // Rota
+
+        System.out.println(patientDevices.get(0).isIsSeriousCondition());
+
+        json.put("body", patientDevices); // Adicionando o Array no JSON que será enviado
+
+        try {
+            ObjectOutputStream output
+                    = new ObjectOutputStream(conn.getOutputStream());
+
+            /* Enviando a requisição para o servidor. */
+            output.writeObject(json);
+
+            output.close();
+        } catch (IOException ioe) {
+            System.err.println("Erro ao tentar enviar os dados dos sensores "
+                    + "para o servidor.");
+            System.out.println(ioe);
+        }
     }
 }
