@@ -58,7 +58,7 @@ public class Fog {
                         if (patientDeviceListSize() != 0) {
                             Socket conn = new Socket(SOCKET_ADDRESS, SOCKET_PORT);
 
-                            sendToServer("POST", "patients/create", conn);
+                            sendToServer("POST", "/patients", conn);
 
                             conn.close();
                         }
