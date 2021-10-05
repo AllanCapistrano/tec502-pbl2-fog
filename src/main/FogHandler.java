@@ -15,8 +15,8 @@ public class FogHandler implements Runnable {
     private static final int QOS = 0;
     /*------------------------------------------------------------------------*/
     
-    private String clientTopic;
-    private MQTTClient clienteMQTT;
+    private final String clientTopic;
+    private final MQTTClient clienteMQTT;
     
     /**
      * Método construtor.
