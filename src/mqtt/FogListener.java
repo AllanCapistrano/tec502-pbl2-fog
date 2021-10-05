@@ -32,8 +32,8 @@ public class FogListener implements IMqttMessageListener {
      * @param qos int - Qualidade do serviço.
      */
     public FogListener(MQTTClient clientMQTT, String topic, int qos) {
-        this.clientMQTT = clientMQTT;
         this.sensorsTopic = topic;
+        this.clientMQTT = clientMQTT;
 
         /**
          * Se inscreve no tópico.
@@ -80,7 +80,7 @@ public class FogListener implements IMqttMessageListener {
     }
 
     /**
-     * Lida com o JSON enviado pelo dispositivo de sensores dos pacintes.
+     * Lida com o JSON enviado pelo dispositivo de sensores dos pacientes.
      *
      * @param json JSONObject - JSON recebido.
      */
