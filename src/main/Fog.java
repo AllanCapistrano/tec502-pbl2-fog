@@ -55,6 +55,7 @@ public class Fog {
             public void run() {
                 while (true) {
                     try {
+                        /* Caso tenha algum dispositivo para ser enviado para o servidor. */
                         if (patientDeviceListSize() != 0) {
                             Socket conn = new Socket(SOCKET_ADDRESS, SOCKET_PORT);
 
@@ -62,7 +63,6 @@ public class Fog {
 
                             conn.close();
                         }
-
                     } catch (UnknownHostException uhe) {
                         System.err.println("Servidor não encontrado ou "
                                 + "está fora do ar.");
@@ -91,7 +91,7 @@ public class Fog {
         while (true) {
             listLength = patientDevices.size();
 
-            /* Por enquanto cada thread lida com 5 requisições. */
+            /* A cada 5 dispositivos uma nova thread é criada */
             if (listLength % REQUEST_COUNT == 0 && listLength != threadCreationControl) {
                 threadCreationControl = listLength;
 
@@ -141,6 +141,23 @@ public class Fog {
     }
 
     /**
+     * Verifica se o dispositivo do paciente está presente na lista.
+     *
+     * @param deviceId String - Id do dispositivo;
+     * @return PatientDevice | null;
+     */
+    public static boolean devicePatientExists(String deviceId) {
+        return (patientDevices.stream()
+                .filter(
+                        patientDevice -> deviceId.equals(
+                                patientDevice.getDeviceId()
+                        )
+                )
+                .findFirst()
+                .orElse(null) != null);
+    }
+
+    /**
      * Envia para o servidor uma requisição.
      *
      * @param httpMethod String - Método HTTP da requisição que será feita.
@@ -173,22 +190,5 @@ public class Fog {
                     + "para o servidor.");
             System.out.println(ioe);
         }
-    }
-    
-    /**
-     * Verifica se o dispositivo do paciente está presente na lista.
-     *
-     * @param deviceId String - Id do dispositivo;
-     * @return PatientDevice | null;
-     */
-    public static boolean devicePatientExists(String deviceId) {
-        return (patientDevices.stream()
-                .filter(
-                        patientDevice -> deviceId.equals(
-                                patientDevice.getDeviceId()
-                        )
-                )
-                .findFirst()
-                .orElse(null) != null);
     }
 }
