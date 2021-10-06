@@ -140,36 +140,32 @@ public class PatientDevice implements Serializable {
     }
 
     /**
-     * Média ponderada para determinar o nível de gravidade dos pacientes que
-     * estão em um estado crítico.
+     * Média ponderada para determinar o nível de gravidade dos pacientes.
      *
      * @return float
      */
     public float calculatePatientSeverityLevel() {
-        if (this.isSeriousCondition) {
-            /* Se todos os valores forem 0, retorna a maior pontuação. */
-            if (this.bodyTemperature == 0
-                    && this.respiratoryFrequency == 0
-                    && this.bloodOxygenation == 0
-                    && this.bloodPressure == 0
-                    && this.heartRate == 0) {
-                return 150;
-            }
-
-            /**
-             * bodyTemperature -> peso 2 | respiratoryFrequency -> peso 2
-             * bloodOxygenation -> peso 4 | bloodPressure peso -> 1 | heartRate
-             * -> peso 1
-             */
-            {
-                return (this.bodyTemperature * 2
-                        + this.respiratoryFrequency * 2
-                        + (100 - this.bloodOxygenation)
-                        + (190 - this.bloodPressure)
-                        + this.heartRate) / (2 + 2 + 4 + 1 + 1);
-            }
+        /* Se todos os valores forem 0, retorna a maior pontuação. */
+        if (this.bodyTemperature == 0
+                && this.respiratoryFrequency == 0
+                && this.bloodOxygenation == 0
+                && this.bloodPressure == 0
+                && this.heartRate == 0) {
+            return 150;
         }
 
-        return 0;
+        /**
+         * bodyTemperature -> peso 2 | respiratoryFrequency -> peso 2
+         * bloodOxygenation -> peso 4 | bloodPressure peso -> 1 | heartRate ->
+         * peso 1
+         */
+        {
+            return (this.bodyTemperature * 2
+                    + this.respiratoryFrequency * 2
+                    + (100 - this.bloodOxygenation)
+                    + (190 - this.bloodPressure)
+                    + this.heartRate) / (2 + 2 + 4 + 1 + 1);
+        }
+
     }
 }
