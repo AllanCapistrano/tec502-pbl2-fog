@@ -128,7 +128,7 @@ public class Fog {
     }
 
     /**
-     * Retorna a lista de dispositivos dos pacientes;
+     * Retorna a lista de dispositivos dos pacientes.
      *
      * @return List<PatientDevice>
      */
@@ -139,8 +139,8 @@ public class Fog {
     /**
      * Verifica se o dispositivo do paciente está presente na lista.
      *
-     * @param deviceId String - Id do dispositivo;
-     * @return PatientDevice | null;
+     * @param deviceId String - Id do dispositivo
+     * @return PatientDevice | null
      */
     public static boolean devicePatientExists(String deviceId) {
         return (patientDevices.stream()
