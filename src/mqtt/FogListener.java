@@ -1,10 +1,12 @@
 package mqtt;
 
+import java.util.Collections;
 import main.Fog;
 import models.PatientDevice;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONObject;
+import utils.ComparePatients;
 
 /**
  * Lida com a mensagem recebida pelo Broker MQTT.
@@ -120,5 +122,7 @@ public class FogListener implements IMqttMessageListener {
                 }
             }
         }
+        
+        Collections.sort(Fog.getPatientsDevicesList(), new ComparePatients());
     }
 }
