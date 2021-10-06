@@ -128,6 +128,15 @@ public class Fog {
     }
 
     /**
+     * Retorna a lista de dispositivos dos pacientes;
+     *
+     * @return List<PatientDevice>
+     */
+    public static List<PatientDevice> getPatientsDevicesList() {
+        return patientDevices;
+    }
+
+    /**
      * Verifica se o dispositivo do paciente está presente na lista.
      *
      * @param deviceId String - Id do dispositivo;
