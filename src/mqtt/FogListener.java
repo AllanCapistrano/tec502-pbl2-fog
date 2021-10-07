@@ -117,6 +117,7 @@ public class FogListener implements IMqttMessageListener {
                     Fog.getPatientDevice(i).setBloodOxygenation(bloodOxygen);
                     Fog.getPatientDevice(i).setBloodPressure(bloodPressure);
                     Fog.getPatientDevice(i).setHeartRate(heartRate);
+                    Fog.getPatientDevice(i).setPatientSeverityLevel(Fog.getPatientDevice(i).calculatePatientSeverityLevel());
 
                     break;
                 }
