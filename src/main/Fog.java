@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import models.PatientDevice;
@@ -28,10 +29,14 @@ public class Fog {
     /*-------------------------- Constantes ----------------------------------*/
     private static final int REQUEST_COUNT = 5;
     private static final String SOCKET_ADDRESS = "localhost";
-    private static final int SOCKET_PORT = 12245;
+    private static int SOCKET_PORT = 12240;
     private static final int SLEEP = 5000;
-    private static final String DEFAULT_TOPIC = "tec502/pbl2/fog";
+    private static final String DEFAULT_TOPIC = "tec502/pbl2/fog/";
+    private static final int QOS = 0;
     /*------------------------------------------------------------------------*/
+    
+    private static final String regions[]
+            = {"Norte", "Nordeste", "Centro-Oeste", "Sudeste", "Sul"};
 
     private static final List<PatientDevice> patientDevices
             = Collections.synchronizedList(new ArrayList());
@@ -48,6 +53,25 @@ public class Fog {
     private static int threadCreationControl = -1;
 
     public static void main(String[] args) {
+        Scanner keyboardInput = new Scanner(System.in);
+        int regionIndex = 0;
+        
+        System.out.println("Digite o número que corresponde a região dessa Fog: ");
+        System.out.println("1 - Norte");
+        System.out.println("2 - Nordeste");
+        System.out.println("3 - Centro-Oeste");
+        System.out.println("4 - Sudeste");
+        System.out.println("5 - Sul");
+        System.out.print("> ");
+        
+        try {
+           regionIndex = keyboardInput.nextInt() - 1;
+           SOCKET_PORT += regionIndex;
+        } catch (Exception e) {
+            System.err.println("Erro ao dar entrada nas opções");
+            System.exit(0);
+        }
+        
         listLength = patientDevices.size();
 
         MQTTClient mqttClient
@@ -58,7 +82,12 @@ public class Fog {
                 );
         mqttClient.connect();
 
-        new FogListener(mqttClient, "tec502/pbl2/fog", 0);
+        new FogListener(
+                mqttClient, 
+                DEFAULT_TOPIC + regions[regionIndex], 
+                QOS, 
+                regions[regionIndex]
+        );
 
         /**
          * Iniciando o servidor Fog que recebe requisições do servidor
@@ -80,8 +109,9 @@ public class Fog {
                 threadCreationControl = listLength;
 
                 FogListener.clientTopic
-                        = DEFAULT_TOPIC + "/"
-                        + System.currentTimeMillis()
+                        = DEFAULT_TOPIC
+                        + regions[regionIndex]
+                        + "/" + System.currentTimeMillis()
                         + "/" + threadCreationControl;
 
                 /**

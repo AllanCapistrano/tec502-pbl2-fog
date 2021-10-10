@@ -17,7 +17,8 @@ public class FogListener implements IMqttMessageListener {
 
     /*-------------------------- Constantes ----------------------------------*/
     private static final String MQTT_ADDRESS = "tcp://broker.mqttdashboard.com:1883";
-    private static final String RESPONSE_TOPIC = "tec502/pbl2/patientDevice";
+    private static final String DEFAULT_PUBLISH_TOPIC = "tec502/pbl2/fog/";
+    private static final String RESPONSE_TOPIC = "tec502/pbl2/patientDevice/";
     private static final int QOS = 0;
     /*------------------------------------------------------------------------*/
 
@@ -25,7 +26,27 @@ public class FogListener implements IMqttMessageListener {
 
     private final MQTTClient clientMQTT;
     private final String sensorsTopic;
+    private String region;
 
+    /**
+     * Método construtor.
+     *
+     * @param clientMQTT MQTTClient Cliente MQTT conectado com o Broker.
+     * @param topic String - Tópico para realizar a inscrição.
+     * @param qos int - Qualidade do serviço.
+     * @param region String - Região a qual a Fog pertence.
+     */
+    public FogListener(MQTTClient clientMQTT, String topic, int qos, String region) {
+        this.sensorsTopic = topic;
+        this.clientMQTT = clientMQTT;
+        this.region = region;
+
+        /**
+         * Se inscreve no tópico.
+         */
+        this.clientMQTT.subscribe(qos, this, topic);
+    }
+    
     /**
      * Método construtor.
      *
@@ -56,7 +77,7 @@ public class FogListener implements IMqttMessageListener {
          * Caso tenha recebido a mensagem certa, responde com o tópico que o
          * dispositivo deverá publicar.
          */
-        if (topic.equals("tec502/pbl2/fog")) {
+        if (topic.equals(DEFAULT_PUBLISH_TOPIC + this.region)) {
             this.response();
         } else if (topic.equals(this.sensorsTopic) && !this.sensorsTopic.equals("")) {
             JSONObject json = new JSONObject(new String(msg.getPayload()));
@@ -78,7 +99,7 @@ public class FogListener implements IMqttMessageListener {
 
         json.put("topic", clientTopic);
 
-        response.publish(RESPONSE_TOPIC, json.toString().getBytes(), QOS);
+        response.publish(RESPONSE_TOPIC + this.region, json.toString().getBytes(), QOS);
     }
 
     /**
