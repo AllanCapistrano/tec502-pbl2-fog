@@ -1,5 +1,6 @@
 package main;
 
+import utils.PatientToJson;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -170,7 +171,7 @@ public class Fog {
      * Verifica se o dispositivo do paciente está presente na lista.
      *
      * @param deviceId String - Id do dispositivo
-     * @return PatientDevice | null
+     * @return boolean
      */
     public static boolean devicePatientExists(String deviceId) {
         return (patientDevices.stream()
@@ -182,6 +183,23 @@ public class Fog {
                 .findFirst()
                 .orElse(null) != null);
     }
+    
+    /**
+     * Verifica se o dispositivo do paciente está presente na lista e o retorna.
+     *
+     * @param deviceId String - Id do dispositivo
+     * @return PatientDevice | null
+     */
+    public static PatientDevice getDevicePatient(String deviceId) {
+        return (patientDevices.stream()
+                .filter(
+                        patientDevice -> deviceId.equals(
+                                patientDevice.getDeviceId()
+                        )
+                )
+                .findFirst()
+                .orElse(null));
+    }
 
     /**
      * Envia para o servidor uma requisição.
@@ -189,15 +207,13 @@ public class Fog {
      * @param httpMethod String - Método HTTP da requisição que será feita.
      * @param route String - Rota para a qual a requisição será feita.
      * @param conn Socket - Conexão que é realizada com o servidor.
-     * @param amount int - Quantidade de pacientes requisitados.
      */
     public static void sendToServer(
             String httpMethod,
             String route,
-            Socket conn,
-            int amount
+            Socket conn
     ) {
-        JSONObject json = patientsDevicesToJSON(httpMethod, route, amount);
+        JSONObject json = patientsDevicesToJSON(httpMethod, route);
 
         try {
             ObjectOutputStream output
@@ -213,7 +229,7 @@ public class Fog {
             System.out.println(ioe);
         }
     }
-
+    
     /**
      * Inicializa o servidor da Fog.
      */
@@ -255,17 +271,15 @@ public class Fog {
                                     .equals("GET")
                                     && request
                                             .getString("route")
-                                            .contains("/patients/")) {
-                                String[] temp
-                                        = request.getString("route").split("/");
+                                            .equals("/patients")) {
 
                                 sendToServer(
                                         "POST",
                                         "/patients",
-                                        connection,
-                                        Integer.parseInt(temp[2])
+                                        connection
                                 );
                             }
+                            
                             connection.close();
                         }
 
@@ -297,34 +311,20 @@ public class Fog {
      *
      * @param httpMethod String - Método HTTP da requisição que será feita.
      * @param route String - Rota para a qual a requisição será feita.
-     * @param amount int - Quantidade de pacientes requisitados.
      */
     private static JSONObject patientsDevicesToJSON(
             String httpMethod,
-            String route,
-            int amount
+            String route
     ) {
-        ArrayList<PatientDevice> temp = new ArrayList<>();
         JSONObject json = new JSONObject();
 
         /* Definindo os dados que serão enviadas para o servidor. */
         json.put("method", httpMethod); // Método HTTP
         json.put("route", route); // Rota
 
-        /**
-         * Verifica se tem a quantidade de pacientes requisitada existe na
-         * lista.
-         */
-        int listSize = (amount > patientDevices.size())
-                ? patientDevices.size()
-                : amount;
-
-        for (int i = 0; i < listSize; i++) {
-            temp.add(patientDevices.get(i));
-        }
-
-        json.put("body", temp); // Adicionando o Array no JSON que será enviado
+        json.put("body", patientDevices); // Adicionando o Array no JSON que será enviado
 
         return json;
     }
+    
 }
