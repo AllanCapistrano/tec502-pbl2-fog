@@ -18,6 +18,7 @@ import java.util.concurrent.Executors;
 import models.PatientDevice;
 import mqtt.FogListener;
 import mqtt.MQTTClient;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -29,7 +30,8 @@ public class Fog {
 
     /*-------------------------- Constantes ----------------------------------*/
     private static final int REQUEST_COUNT = 5;
-    private static final String SOCKET_ADDRESS = "localhost";
+    private static final String MQTT_ADDRESS = "tcp://26.174.47.54:1893";
+    private static final String SOCKET_ADDRESS = "26.174.47.54";
     private static int SOCKET_PORT = 12240;
     private static final int SLEEP = 5000;
     private static final String DEFAULT_TOPIC = "tec502/pbl2/fog/";
@@ -77,7 +79,7 @@ public class Fog {
 
         MQTTClient mqttClient
                 = new MQTTClient(
-                        "tcp://broker.mqttdashboard.com:1883",
+                        MQTT_ADDRESS,
                         null,
                         null
                 );
@@ -316,15 +318,9 @@ public class Fog {
             String httpMethod,
             String route
     ) {
-        JSONObject json = new JSONObject();
+        List<PatientDevice> temp = patientDevices;
 
-        /* Definindo os dados que serão enviadas para o servidor. */
-        json.put("method", httpMethod); // Método HTTP
-        json.put("route", route); // Rota
-
-        json.put("body", patientDevices); // Adicionando o Array no JSON que será enviado
-
-        return json;
+        return PatientToJson.handle(temp, httpMethod, route);
     }
     
 }
