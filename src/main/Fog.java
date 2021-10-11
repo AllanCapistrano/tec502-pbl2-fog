@@ -30,8 +30,8 @@ public class Fog {
 
     /*-------------------------- Constantes ----------------------------------*/
     private static final int REQUEST_COUNT = 5;
-    private static final String MQTT_ADDRESS = "tcp://26.174.47.54:1893";
-    private static final String SOCKET_ADDRESS = "26.174.47.54";
+    private static final String MQTT_ADDRESS = "tcp://broker.mqttdashboard.com:1883";
+    private static final String SOCKET_ADDRESS = "localhost";
     private static int SOCKET_PORT = 12240;
     private static final int SLEEP = 5000;
     private static final String DEFAULT_TOPIC = "tec502/pbl2/fog/";
