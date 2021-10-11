@@ -32,7 +32,6 @@ public class PatientToJson {
 
         for (PatientDevice patientDevice : patientDevicesList) {
             JSONObject patientDeviceJson = new JSONObject();
-
             
             patientDeviceJson.put("name",
                     patientDevice.getName());
@@ -45,6 +44,60 @@ public class PatientToJson {
         }
 
         json.put("data", jsonArray);
+
+        return json;
+    }
+    
+    /**
+     * Transforma a lista de pacientes no formato JSON.
+     *
+     * @param patientDevicesList List<PatientDevice> - Lista de pacientes.
+     * @param httpMethod String - Método HTTP da requisição que será feita.
+     * @param route String - Rota para a qual a requisição será feita.
+     * @return JSONObject
+     */
+    public static JSONObject handle(
+            List<PatientDevice> patientDevicesList,
+            String httpMethod,
+            String route
+    ) {
+        JSONObject json = new JSONObject();
+        
+        JSONArray jsonArray = new JSONArray();
+
+        /* Definindo os dados que serão enviadas para o servidor. */
+        json.put("method", httpMethod); // Método HTTP
+        json.put("route", route); // Rota
+        
+        for (PatientDevice patientDevice : patientDevicesList) {
+            JSONObject patientDeviceJson = new JSONObject();
+            
+            patientDeviceJson.put("name",
+                    patientDevice.getName());
+            patientDeviceJson.put("deviceId",
+                    patientDevice.getDeviceId());
+            patientDeviceJson.put("bodyTemperature",
+                    patientDevice.getBodyTemperature());
+            patientDeviceJson.put("respiratoryFrequency",
+                    patientDevice.getRespiratoryFrequency());
+            patientDeviceJson.put("bloodOxygenation",
+                    patientDevice.getBloodOxygenation());
+            patientDeviceJson.put("bloodPressure",
+                    patientDevice.getBloodPressure());
+            patientDeviceJson.put("heartRate",
+                    patientDevice.getHeartRate());
+            patientDeviceJson.put("isSeriousCondition",
+                    patientDevice.isIsSeriousCondition());
+            patientDeviceJson.put("isSeriousConditionLabel",
+                    patientDevice.getIsSeriousConditionLabel());
+            patientDeviceJson.put("patientSeverityLevel",
+                    patientDevice.getPatientSeverityLevel());
+            
+
+            jsonArray.put(patientDeviceJson);
+        }
+
+        json.put("body", jsonArray); // Adicionando o Array no JSON que será enviado
 
         return json;
     }
