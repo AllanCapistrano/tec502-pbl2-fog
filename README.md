@@ -1,7 +1,7 @@
 # tec502-pbl2-fog
 
 <p align="center">
-  <img src="https://i.imgur.com/3o0SHg4.png" alt="server icon" width="300px" height="300px">
+  <img src="https://i.imgur.com/3o0SHg4.png" alt="fog icon" width="300px" height="300px">
 </p>
 
 ------------
