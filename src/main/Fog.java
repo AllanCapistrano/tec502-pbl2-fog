@@ -18,7 +18,6 @@ import java.util.concurrent.Executors;
 import models.PatientDevice;
 import mqtt.FogListener;
 import mqtt.MQTTClient;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
