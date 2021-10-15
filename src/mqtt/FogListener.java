@@ -16,7 +16,6 @@ import utils.ComparePatients;
 public class FogListener implements IMqttMessageListener {
 
     /*-------------------------- Constantes ----------------------------------*/
-    private static final String MQTT_ADDRESS = "tcp://broker.mqttdashboard.com:1883";
     private static final String DEFAULT_PUBLISH_TOPIC = "tec502/pbl2/fog/";
     private static final String RESPONSE_TOPIC = "tec502/pbl2/patientDevice/";
     private static final int QOS = 0;
@@ -92,7 +91,7 @@ public class FogListener implements IMqttMessageListener {
      * Responde para o dispositivo qual o tópico que ele deve publicar.
      */
     private void response() {
-        MQTTClient response = new MQTTClient(MQTT_ADDRESS, null, null);
+        MQTTClient response = new MQTTClient(Fog.MQTT_ADDRESS, null, null);
         response.connect();
 
         JSONObject json = new JSONObject();

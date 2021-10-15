@@ -11,7 +11,6 @@ import mqtt.MQTTClient;
 public class FogHandler implements Runnable {
 
     /*-------------------------- Constantes ----------------------------------*/
-    private static final String MQTT_ADDRESS = "tcp://broker.mqttdashboard.com:1883";
     private static final int QOS = 0;
     /*------------------------------------------------------------------------*/
     
@@ -25,7 +24,7 @@ public class FogHandler implements Runnable {
      * valores medidos pelos sensores.
      */
     public FogHandler(String clientTopic) {
-        this.clienteMQTT = new MQTTClient(MQTT_ADDRESS, null, null);
+        this.clienteMQTT = new MQTTClient(Fog.MQTT_ADDRESS, null, null);
         this.clienteMQTT.connect();
         
         this.clientTopic = clientTopic;
