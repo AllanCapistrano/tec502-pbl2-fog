@@ -36,7 +36,7 @@ public class Fog {
     private static final String DEFAULT_TOPIC = "tec502/pbl2/fog/";
     private static final int QOS = 0;
     /*------------------------------------------------------------------------*/
-    
+
     private static final String regions[]
             = {"Norte", "Nordeste", "Centro-Oeste", "Sudeste", "Sul"};
 
@@ -57,7 +57,7 @@ public class Fog {
     public static void main(String[] args) {
         Scanner keyboardInput = new Scanner(System.in);
         int regionIndex = 0;
-        
+
         System.out.println("Digite o número que corresponde a região dessa Fog: ");
         System.out.println("1 - Norte");
         System.out.println("2 - Nordeste");
@@ -65,15 +65,15 @@ public class Fog {
         System.out.println("4 - Sudeste");
         System.out.println("5 - Sul");
         System.out.print("> ");
-        
+
         try {
-           regionIndex = keyboardInput.nextInt() - 1;
-           SOCKET_PORT += regionIndex;
+            regionIndex = keyboardInput.nextInt() - 1;
+            SOCKET_PORT += regionIndex;
         } catch (Exception e) {
             System.err.println("Erro ao dar entrada nas opções");
             System.exit(0);
         }
-        
+
         listLength = patientDevices.size();
 
         MQTTClient mqttClient
@@ -85,9 +85,9 @@ public class Fog {
         mqttClient.connect();
 
         new FogListener(
-                mqttClient, 
-                DEFAULT_TOPIC + regions[regionIndex], 
-                QOS, 
+                mqttClient,
+                DEFAULT_TOPIC + regions[regionIndex],
+                QOS,
                 regions[regionIndex]
         );
 
@@ -184,7 +184,7 @@ public class Fog {
                 .findFirst()
                 .orElse(null) != null);
     }
-    
+
     /**
      * Verifica se o dispositivo do paciente está presente na lista e o retorna.
      *
@@ -207,14 +207,20 @@ public class Fog {
      *
      * @param httpMethod String - Método HTTP da requisição que será feita.
      * @param route String - Rota para a qual a requisição será feita.
+     * @param amount int - Quantidade de dispositivos de pacientes.
      * @param conn Socket - Conexão que é realizada com o servidor.
      */
     public static void sendToServer(
             String httpMethod,
             String route,
+            int amount,
             Socket conn
     ) {
-        JSONObject json = patientsDevicesToJSON(httpMethod, route);
+        amount = amount > Fog.patientDeviceListSize()
+                ? Fog.patientDeviceListSize()
+                : amount;
+
+        JSONObject json = patientsDevicesToJSON(httpMethod, route, amount);
 
         try {
             ObjectOutputStream output
@@ -230,7 +236,7 @@ public class Fog {
             System.out.println(ioe);
         }
     }
-    
+
     /**
      * Inicializa o servidor da Fog.
      */
@@ -272,15 +278,18 @@ public class Fog {
                                     .equals("GET")
                                     && request
                                             .getString("route")
-                                            .equals("/patients")) {
+                                            .contains("/patients")) {
+
+                                String[] temp = request.getString("route").split("/");
 
                                 sendToServer(
                                         "POST",
                                         "/patients",
+                                        Integer.parseInt(temp[2]),
                                         connection
                                 );
                             }
-                            
+
                             connection.close();
                         }
 
@@ -312,14 +321,16 @@ public class Fog {
      *
      * @param httpMethod String - Método HTTP da requisição que será feita.
      * @param route String - Rota para a qual a requisição será feita.
+     * @param amount int - Quantidade de dispositivos de pacientes.
      */
     private static JSONObject patientsDevicesToJSON(
             String httpMethod,
-            String route
+            String route,
+            int amount
     ) {
         List<PatientDevice> temp = patientDevices;
 
-        return PatientToJson.handle(temp, httpMethod, route);
+        return PatientToJson.handle(temp, httpMethod, route, amount);
     }
-    
+
 }
