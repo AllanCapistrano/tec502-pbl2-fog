@@ -55,12 +55,14 @@ public class PatientToJson {
      * @param patientDevicesList List<PatientDevice> - Lista de pacientes.
      * @param httpMethod String - Método HTTP da requisição que será feita.
      * @param route String - Rota para a qual a requisição será feita.
+     * @param amount int - Quantidade de dispositivos de pacientes.
      * @return JSONObject
      */
     public static JSONObject handle(
             List<PatientDevice> patientDevicesList,
             String httpMethod,
-            String route
+            String route,
+            int amount
     ) {
         JSONObject json = new JSONObject();
 
@@ -70,30 +72,31 @@ public class PatientToJson {
         json.put("method", httpMethod); // Método HTTP
         json.put("route", route); // Rota
 
-        for (PatientDevice patientDevice : patientDevicesList) {
+        for (int i = 0; i < amount; i++) {
             JSONObject patientDeviceJson = new JSONObject();
 
             patientDeviceJson.put("name",
-                    patientDevice.getName());
+                    patientDevicesList.get(i).getName());
             patientDeviceJson.put("deviceId",
-                    patientDevice.getDeviceId());
+                    patientDevicesList.get(i).getDeviceId());
             patientDeviceJson.put("bodyTemperature",
-                    patientDevice.getBodyTemperature());
+                    patientDevicesList.get(i).getBodyTemperature());
             patientDeviceJson.put("respiratoryFrequency",
-                    patientDevice.getRespiratoryFrequency());
+                    patientDevicesList.get(i).getRespiratoryFrequency());
             patientDeviceJson.put("bloodOxygenation",
-                    patientDevice.getBloodOxygenation());
+                    patientDevicesList.get(i).getBloodOxygenation());
             patientDeviceJson.put("bloodPressure",
-                    patientDevice.getBloodPressure());
+                    patientDevicesList.get(i).getBloodPressure());
             patientDeviceJson.put("heartRate",
-                    patientDevice.getHeartRate());
+                    patientDevicesList.get(i).getHeartRate());
             patientDeviceJson.put("isSeriousCondition",
-                    patientDevice.isIsSeriousCondition());
+                    patientDevicesList.get(i).isIsSeriousCondition());
             patientDeviceJson.put("isSeriousConditionLabel",
-                    patientDevice.getIsSeriousConditionLabel());
+                    patientDevicesList.get(i).getIsSeriousConditionLabel());
             patientDeviceJson.put("patientSeverityLevel",
-                    patientDevice.getPatientSeverityLevel());
-            patientDeviceJson.put("fogServer", patientDevice.getFogServer());
+                    patientDevicesList.get(i).getPatientSeverityLevel());
+            patientDeviceJson.put("fogServer",
+                    patientDevicesList.get(i).getFogServer());
 
             jsonArray.put(patientDeviceJson);
         }
