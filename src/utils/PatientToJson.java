@@ -25,20 +25,21 @@ public class PatientToJson {
     ) {
         JSONObject json = new JSONObject();
         JSONArray jsonArray = new JSONArray();
-        
-        if (hasStatusCode){
+
+        if (hasStatusCode) {
             json.put("statusCode", 200);
         }
 
         for (PatientDevice patientDevice : patientDevicesList) {
             JSONObject patientDeviceJson = new JSONObject();
-            
+
             patientDeviceJson.put("name",
                     patientDevice.getName());
             patientDeviceJson.put("deviceId",
                     patientDevice.getDeviceId());
             patientDeviceJson.put("isSeriousConditionLabel",
                     patientDevice.getIsSeriousConditionLabel());
+            patientDeviceJson.put("fogServer", patientDevice.getFogServer());
 
             jsonArray.put(patientDeviceJson);
         }
@@ -47,7 +48,7 @@ public class PatientToJson {
 
         return json;
     }
-    
+
     /**
      * Transforma a lista de pacientes no formato JSON.
      *
@@ -62,16 +63,16 @@ public class PatientToJson {
             String route
     ) {
         JSONObject json = new JSONObject();
-        
+
         JSONArray jsonArray = new JSONArray();
 
         /* Definindo os dados que serão enviadas para o servidor. */
         json.put("method", httpMethod); // Método HTTP
         json.put("route", route); // Rota
-        
+
         for (PatientDevice patientDevice : patientDevicesList) {
             JSONObject patientDeviceJson = new JSONObject();
-            
+
             patientDeviceJson.put("name",
                     patientDevice.getName());
             patientDeviceJson.put("deviceId",
@@ -92,7 +93,7 @@ public class PatientToJson {
                     patientDevice.getIsSeriousConditionLabel());
             patientDeviceJson.put("patientSeverityLevel",
                     patientDevice.getPatientSeverityLevel());
-            
+            patientDeviceJson.put("fogServer", patientDevice.getFogServer());
 
             jsonArray.put(patientDeviceJson);
         }
@@ -101,17 +102,17 @@ public class PatientToJson {
 
         return json;
     }
-    
+
     /**
      * Transforma o dispositivo do paciente no formato JSON.
      *
      * @param patient PatientDevice - Dispositivo do paciente.
      * @return JSONObject
      */
-    public static JSONObject handle(PatientDevice patient){
+    public static JSONObject handle(PatientDevice patient) {
         JSONObject json = new JSONObject();
         json.put("statusCode", 200);
-        
+
         JSONObject jsonPatient = new JSONObject();
         jsonPatient.put("name", patient.getName());
         jsonPatient.put("deviceId", patient.getDeviceId());
@@ -123,9 +124,10 @@ public class PatientToJson {
         jsonPatient.put("isSeriousCondition", patient.isIsSeriousCondition());
         jsonPatient.put("isSeriousConditionLabel", patient.getIsSeriousConditionLabel());
         jsonPatient.put("patientSeverityLevel", patient.getPatientSeverityLevel());
-          
+        jsonPatient.put("fogServer", patient.getFogServer());
+
         json.put("data", jsonPatient);
-        
+
         return json;
     }
 }
