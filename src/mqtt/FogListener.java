@@ -126,7 +126,9 @@ public class FogListener implements IMqttMessageListener {
                             bloodOxygen,
                             bloodPressure,
                             heartRate,
-                            deviceId
+                            deviceId,
+                            Fog.SOCKET_ADDRESS,
+                            Fog.SOCKET_PORT
                     )
             );
         } else {

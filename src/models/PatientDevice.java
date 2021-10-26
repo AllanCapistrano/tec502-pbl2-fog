@@ -19,6 +19,7 @@ public class PatientDevice implements Serializable {
     private boolean isSeriousCondition;
     private String isSeriousConditionLabel;
     private float patientSeverityLevel;
+    private FogServer fogServer;
 
     /**
      * Método construtor.
@@ -33,6 +34,9 @@ public class PatientDevice implements Serializable {
      * @param bloodPressure int - Pressão arterial registrada pelo sensor.
      * @param heartRate int - Frequência cardíaca registrada pelo sensor.
      * @param deviceId String - Identificador do dispositivo do paciente.
+     * @param address String - Endereço da Fog em que o dispositivo está 
+     * conectado.
+     * @param port int - Porta da Fog em que o dispositivo está conectado.
      */
     public PatientDevice(
             String name,
@@ -41,7 +45,9 @@ public class PatientDevice implements Serializable {
             float bloodOxygenation,
             int bloodPressure,
             int heartRate,
-            String deviceId
+            String deviceId,
+            String address,
+            int port
     ) {
         this.name = name;
         this.bodyTemperature = bodyTemperature;
@@ -55,6 +61,8 @@ public class PatientDevice implements Serializable {
         this.patientSeverityLevel = this.calculatePatientSeverityLevel();
 
         this.isSeriousConditionLabel = this.checkPatientCondition() ? "Grave" : "Normal";
+        
+        this.fogServer = new FogServer(address, port);
     }
 
     public String getName() {
@@ -129,6 +137,10 @@ public class PatientDevice implements Serializable {
 
     public String getIsSeriousConditionLabel() {
         return isSeriousConditionLabel;
+    }
+    
+    public FogServer getFogServer() {
+        return fogServer;
     }
 
     /**

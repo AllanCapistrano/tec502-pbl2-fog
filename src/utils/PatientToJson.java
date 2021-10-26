@@ -16,102 +16,54 @@ public class PatientToJson {
      * Transforma a lista de pacientes no formato JSON.
      *
      * @param patientDevicesList List<PatientDevice> - Lista de pacientes.
-     * @param hasStatusCode
-     * @return JSONObject
-     */
-    public static JSONObject handle(
-            List<PatientDevice> patientDevicesList,
-            boolean hasStatusCode
-    ) {
-        JSONObject json = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        
-        if (hasStatusCode){
-            json.put("statusCode", 200);
-        }
-
-        for (PatientDevice patientDevice : patientDevicesList) {
-            JSONObject patientDeviceJson = new JSONObject();
-            
-            patientDeviceJson.put("name",
-                    patientDevice.getName());
-            patientDeviceJson.put("deviceId",
-                    patientDevice.getDeviceId());
-            patientDeviceJson.put("isSeriousConditionLabel",
-                    patientDevice.getIsSeriousConditionLabel());
-
-            jsonArray.put(patientDeviceJson);
-        }
-
-        json.put("data", jsonArray);
-
-        return json;
-    }
-    
-    /**
-     * Transforma a lista de pacientes no formato JSON.
-     *
-     * @param patientDevicesList List<PatientDevice> - Lista de pacientes.
      * @param httpMethod String - Método HTTP da requisição que será feita.
      * @param route String - Rota para a qual a requisição será feita.
+     * @param amount int - Quantidade de dispositivos de pacientes.
      * @return JSONObject
      */
     public static JSONObject handle(
             List<PatientDevice> patientDevicesList,
             String httpMethod,
-            String route
+            String route,
+            int amount
     ) {
         JSONObject json = new JSONObject();
-        
         JSONArray jsonArray = new JSONArray();
-
+        
         /* Definindo os dados que serão enviadas para o servidor. */
         json.put("method", httpMethod); // Método HTTP
         json.put("route", route); // Rota
-        
-        for (PatientDevice patientDevice : patientDevicesList) {
+
+        for (int i = 0; i < amount; i++) {
             JSONObject patientDeviceJson = new JSONObject();
-            
+
             patientDeviceJson.put("name",
-                    patientDevice.getName());
+                    patientDevicesList.get(i).getName());
             patientDeviceJson.put("deviceId",
-                    patientDevice.getDeviceId());
-            patientDeviceJson.put("bodyTemperature",
-                    patientDevice.getBodyTemperature());
-            patientDeviceJson.put("respiratoryFrequency",
-                    patientDevice.getRespiratoryFrequency());
-            patientDeviceJson.put("bloodOxygenation",
-                    patientDevice.getBloodOxygenation());
-            patientDeviceJson.put("bloodPressure",
-                    patientDevice.getBloodPressure());
-            patientDeviceJson.put("heartRate",
-                    patientDevice.getHeartRate());
-            patientDeviceJson.put("isSeriousCondition",
-                    patientDevice.isIsSeriousCondition());
+                    patientDevicesList.get(i).getDeviceId());
             patientDeviceJson.put("isSeriousConditionLabel",
-                    patientDevice.getIsSeriousConditionLabel());
-            patientDeviceJson.put("patientSeverityLevel",
-                    patientDevice.getPatientSeverityLevel());
-            
+                    patientDevicesList.get(i).getIsSeriousConditionLabel());
+            patientDeviceJson.put("fogServer",
+                    patientDevicesList.get(i).getFogServer());
 
             jsonArray.put(patientDeviceJson);
         }
 
-        json.put("body", jsonArray); // Adicionando o Array no JSON que será enviado
+        json.put("body", jsonArray);
 
         return json;
     }
-    
+
     /**
      * Transforma o dispositivo do paciente no formato JSON.
      *
      * @param patient PatientDevice - Dispositivo do paciente.
      * @return JSONObject
      */
-    public static JSONObject handle(PatientDevice patient){
+    public static JSONObject handle(PatientDevice patient) {
         JSONObject json = new JSONObject();
         json.put("statusCode", 200);
-        
+
         JSONObject jsonPatient = new JSONObject();
         jsonPatient.put("name", patient.getName());
         jsonPatient.put("deviceId", patient.getDeviceId());
@@ -123,9 +75,10 @@ public class PatientToJson {
         jsonPatient.put("isSeriousCondition", patient.isIsSeriousCondition());
         jsonPatient.put("isSeriousConditionLabel", patient.getIsSeriousConditionLabel());
         jsonPatient.put("patientSeverityLevel", patient.getPatientSeverityLevel());
-          
+        jsonPatient.put("fogServer", patient.getFogServer());
+
         json.put("data", jsonPatient);
-        
+
         return json;
     }
 }
