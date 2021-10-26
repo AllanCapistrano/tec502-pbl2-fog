@@ -16,43 +16,6 @@ public class PatientToJson {
      * Transforma a lista de pacientes no formato JSON.
      *
      * @param patientDevicesList List<PatientDevice> - Lista de pacientes.
-     * @param hasStatusCode
-     * @return JSONObject
-     */
-    public static JSONObject handle(
-            List<PatientDevice> patientDevicesList,
-            boolean hasStatusCode
-    ) {
-        JSONObject json = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-
-        if (hasStatusCode) {
-            json.put("statusCode", 200);
-        }
-
-        for (PatientDevice patientDevice : patientDevicesList) {
-            JSONObject patientDeviceJson = new JSONObject();
-
-            patientDeviceJson.put("name",
-                    patientDevice.getName());
-            patientDeviceJson.put("deviceId",
-                    patientDevice.getDeviceId());
-            patientDeviceJson.put("isSeriousConditionLabel",
-                    patientDevice.getIsSeriousConditionLabel());
-            patientDeviceJson.put("fogServer", patientDevice.getFogServer());
-
-            jsonArray.put(patientDeviceJson);
-        }
-
-        json.put("data", jsonArray);
-
-        return json;
-    }
-
-    /**
-     * Transforma a lista de pacientes no formato JSON.
-     *
-     * @param patientDevicesList List<PatientDevice> - Lista de pacientes.
      * @param httpMethod String - Método HTTP da requisição que será feita.
      * @param route String - Rota para a qual a requisição será feita.
      * @param amount int - Quantidade de dispositivos de pacientes.
@@ -65,9 +28,8 @@ public class PatientToJson {
             int amount
     ) {
         JSONObject json = new JSONObject();
-
         JSONArray jsonArray = new JSONArray();
-
+        
         /* Definindo os dados que serão enviadas para o servidor. */
         json.put("method", httpMethod); // Método HTTP
         json.put("route", route); // Rota
@@ -79,29 +41,15 @@ public class PatientToJson {
                     patientDevicesList.get(i).getName());
             patientDeviceJson.put("deviceId",
                     patientDevicesList.get(i).getDeviceId());
-            patientDeviceJson.put("bodyTemperature",
-                    patientDevicesList.get(i).getBodyTemperature());
-            patientDeviceJson.put("respiratoryFrequency",
-                    patientDevicesList.get(i).getRespiratoryFrequency());
-            patientDeviceJson.put("bloodOxygenation",
-                    patientDevicesList.get(i).getBloodOxygenation());
-            patientDeviceJson.put("bloodPressure",
-                    patientDevicesList.get(i).getBloodPressure());
-            patientDeviceJson.put("heartRate",
-                    patientDevicesList.get(i).getHeartRate());
-            patientDeviceJson.put("isSeriousCondition",
-                    patientDevicesList.get(i).isIsSeriousCondition());
             patientDeviceJson.put("isSeriousConditionLabel",
                     patientDevicesList.get(i).getIsSeriousConditionLabel());
-            patientDeviceJson.put("patientSeverityLevel",
-                    patientDevicesList.get(i).getPatientSeverityLevel());
             patientDeviceJson.put("fogServer",
                     patientDevicesList.get(i).getFogServer());
 
             jsonArray.put(patientDeviceJson);
         }
 
-        json.put("body", jsonArray); // Adicionando o Array no JSON que será enviado
+        json.put("body", jsonArray);
 
         return json;
     }
