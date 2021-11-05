@@ -29,7 +29,7 @@ public class PatientToJson {
     ) {
         JSONObject json = new JSONObject();
         JSONArray jsonArray = new JSONArray();
-        
+
         /* Definindo os dados que serão enviadas para o servidor. */
         json.put("method", httpMethod); // Método HTTP
         json.put("route", route); // Rota
@@ -43,6 +43,8 @@ public class PatientToJson {
                     patientDevicesList.get(i).getDeviceId());
             patientDeviceJson.put("isSeriousConditionLabel",
                     patientDevicesList.get(i).getIsSeriousConditionLabel());
+            patientDeviceJson.put("patientSeverityLevel",
+                    patientDevicesList.get(i).getPatientSeverityLevel());
             patientDeviceJson.put("fogServer",
                     patientDevicesList.get(i).getFogServer());
 
@@ -68,13 +70,16 @@ public class PatientToJson {
         jsonPatient.put("name", patient.getName());
         jsonPatient.put("deviceId", patient.getDeviceId());
         jsonPatient.put("bodyTemperature", patient.getBodyTemperature());
-        jsonPatient.put("respiratoryFrequency", patient.getRespiratoryFrequency());
+        jsonPatient.put("respiratoryFrequency", 
+                patient.getRespiratoryFrequency());
         jsonPatient.put("bloodOxygenation", patient.getBloodOxygenation());
         jsonPatient.put("bloodPressure", patient.getBloodPressure());
         jsonPatient.put("heartRate", patient.getHeartRate());
         jsonPatient.put("isSeriousCondition", patient.isIsSeriousCondition());
-        jsonPatient.put("isSeriousConditionLabel", patient.getIsSeriousConditionLabel());
-        jsonPatient.put("patientSeverityLevel", patient.getPatientSeverityLevel());
+        jsonPatient.put("isSeriousConditionLabel", 
+                patient.getIsSeriousConditionLabel());
+        jsonPatient.put("patientSeverityLevel", 
+                patient.getPatientSeverityLevel());
         jsonPatient.put("fogServer", patient.getFogServer());
 
         json.put("data", jsonPatient);
