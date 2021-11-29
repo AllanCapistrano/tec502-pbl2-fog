@@ -7,7 +7,7 @@
 ------------
 
 ## 📚 Descrição ##
-**Resolução do problema 2 do MI - Concorrência e Conectividade (TEC 502).**<br/><br/>
+**Resolução do problema 2 do MI - Concorrência e Conectividade (TEC 502) - [Universidade Estadual de Feira de Santana (UEFS)](https://www.uefs.br/).**<br/><br/>
 O projeto trata-se de uma *Fog*, que é responsável por lidar diretamente com os emuladores de sensores. Essa comunicação é realizada através do protoclo *MQTT*, em que, cada *thread* da *Fog* lida com uma quantidade fixa de emuladores, sempre criando, de forma dinâmica, novas *threads* caso uma outra já esteja "cheia". Além disso, esta *Fog* se comunica diretamente com o servidor principal através de *sockets*, e quando solicitada, envia para o mesmo, uma lista contendo os dados se todos os emuladores que estão conectadas com ela.
 
 ### ⛵ Navegação pelos projetos: ###
